@@ -1,6 +1,41 @@
 package com.iu.home.product;
 
+import java.util.List;
+
 public class ProductService {
+	private ProductDAO productDAO;
+ // 여기서만 쓰세요~~~(이 클래스 내에서만 사용 가능 멤버변수)
+//	productSerivce는 productDAO에 의존 (dependency Injection)
+	
+	
+//	private ProductDAO productDAO = new ProductDAO();
+	//-> 결합도가 강하다 - 같이 생성되고 같이 소멸됨.
+//	//멤버변수 초기화 방법 4번 - object와 class(instance 블럭)
+//	{
+//		this.productDAO = new ProductDAO();
+//	}//초기화블럭
+	
+	//멤버변수 초기화 방법 3번 - object와 class
+	public ProductService() {
+		this.productDAO = new ProductDAO();
+		
+	}//생성자 - constructor
+	//결합도가 약하다
+	public void setProductDAO(ProductDAO productDAO) {
+		this.productDAO = productDAO;
+	}//setter
+	
+	public int setAddProduct(ProductDTO productDTO, List<Product_OptionDTO> ar ) throws Exception{
+		//product, option
+		Long productNum=productDAO.getpProductNum();
+		productDTO.setPRODUCTNUM(productNum);
+		int result = productDAO.setAddProduct(productDTO);
+		for(Product_OptionDTO product_OptionDTO : ar) {
+			product_OptionDTO.setPRODUCTNUM(productNum);
+			result = productDAO.setAddProductOption(product_OptionDTO);
+		}
+		return result;
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
